@@ -1,0 +1,8 @@
+{
+  "default": "§7[ §r%rank% §r§7]§r §a%name%",
+  "ranks": {
+    "Guest": "§7[ §r%rank% §r§7]§r §a%name%",
+    "Admin": "§7[ §r%rank% §r§7]§r §d%name%",
+    "Owner": "§7[ §r%rank% §r§7]§r §c%name%"
+  }
+}
