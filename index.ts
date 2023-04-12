@@ -6,6 +6,7 @@ import { Ranks } from "@bdsx/rank-perms/src";
 import { send } from "./src/utils/message";
 import { events } from "bdsx/event";
 import { bedrockServer } from "bdsx/launcher";
+import { commandPerm } from "@bdsx/rank-perms/src/command";
 
 let config: {
     default: string;
@@ -74,6 +75,10 @@ export namespace RankNameMain {
         });
     }
 }
+
+commandPerm.onReloading(() => {
+    RankNameMain.updatePlayersName();
+});
 
 events.playerJoin.on((ev) => {
     RankNameMain.updatePlayersName();
