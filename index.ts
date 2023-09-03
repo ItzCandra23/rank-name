@@ -1,22 +1,22 @@
 import * as path from "path";
 import * as fs from "fs";
 import { ServerPlayer } from "bdsx/bds/player";
-import { Permissions } from "@bdsx/rank-perms";
-import { Ranks } from "@bdsx/rank-perms/src";
+import { RankPerms } from "@bdsx/rank-perms";
 import { send } from "./src/utils/message";
 import { events } from "bdsx/event";
 import { bedrockServer } from "bdsx/launcher";
 import { commandPerm } from "@bdsx/rank-perms/src/command";
+import { PlayerRank } from "@bdsx/rank-perms/src";
 
 let config: {
     default: string;
     ranks: Record<string, string>;
 } = {
-    default: "§7[ §r%rank% §r§7]§r §a%name%",
+    default: "§7[ §r{rank} §r§7]§r §a{name}",
     ranks: {
-        Guest: "§7[ §r%rank% §r§7]§r §a%name%",
-        Admin: "§7[ §r%rank% §r§7]§r §d%name%",
-        Owner: "§7[ §r%rank% §r§7]§r §c%name%",
+        Guest: "§7[ §r{rank} §r§7]§r §a{name}",
+        Admin: "§7[ §r{rank} §r§7]§r §d{name}",
+        Owner: "§7[ §r{rank} §r§7]§r §c{name}",
     },
 };
 
@@ -34,7 +34,7 @@ export namespace RankNameMain {
     }
 
     export function setRankName(rank: string, value: string): boolean {
-        if (!Ranks.has(rank)) return false;
+        if (!RankPerms.hasRank(rank)) return false;
         config.ranks[rank]=value;
         return true;
     }
@@ -49,13 +49,15 @@ export namespace RankNameMain {
     }
 
     export function getPlayerName(player: ServerPlayer): string {
-        const rank = Permissions.getRank(player);
-        const display = Ranks.getDisplay(rank) ?? rank;
-        return getRankName(rank).replace(/%rank%/g, display).replace(/%name%/g, player.getName());
+        const rank = PlayerRank.getRank(player);
+        const display = RankPerms.getDisplay(rank) ?? rank;
+        return getRankName(rank).replace(/{rank}/g, display).replace(/{name}/g, player.getName());
     }
 
     export function updatePlayersName(): void {
-        for (const player of bedrockServer.serverInstance.getPlayers()) {
+        const players = bedrockServer.serverInstance.getPlayers();
+        for (let i = 0; i < players.length; i++) {
+            const player = players[i];
             if (!player.isPlayer()) return;
             if (player.getNameTag() === getPlayerName(player)) return;
 
